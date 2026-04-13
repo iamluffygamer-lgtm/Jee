@@ -462,13 +462,18 @@
 </style>
 </head>
 <body>
-
+<audio id="chomuAudio" loop>
+  <source src="YOUR_AUDIO_FILE.mp3" type="audio/mpeg">
+</audio>
 <!-- HERO -->
 <section class="hero">
   <div class="bg-chaos"></div>
   <div class="marquee-strip">
     <span class="marquee-inner">💀 CHOMU ALERT 💀 HARSHAVARDHAN IS 18 💀 GOD HELP US ALL 💀 COMMON SENSE LEFT THE CHAT 💀 18 YEARS OF CHAOS 💀 CHOMU ALERT 💀 HARSHAVARDHAN IS 18 💀 GOD HELP US ALL 💀 COMMON SENSE LEFT THE CHAT 💀 18 YEARS OF CHAOS 💀</span>
   </div>
+  <button class="chaos-btn" style="bottom: 70px; left: 20px; right: auto; background: var(--c4);" onclick="startAudio()">
+  🎤 ENTER THE CHOMU ZONE
+  </button>
   <div class="title-wrapper">
     <div class="title-chomu">CHOMU</div>
     <div class="title-sub">aka Harshavardhan is officially 18 💀</div>
@@ -639,6 +644,20 @@
       setTimeout(() => card.style.transform = '', 200);
     });
   });
+  function startAudio() {
+  const audio = document.getElementById('chomuAudio');
+  if (audio.paused) {
+    audio.play();
+  } else {
+    audio.pause();
+  }
+}
+
+// Try autoplay on load (works on some browsers)
+window.addEventListener('click', function autoplay() {
+  document.getElementById('chomuAudio').play();
+  window.removeEventListener('click', autoplay);
+}, { once: true });
 </script>
 </body>
 </html>
