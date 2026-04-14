@@ -487,6 +487,21 @@
   }
 
   .highlight { color: var(--accent); font-weight: 700; }
+
+  .set-btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(245,158,11,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(245,158,11,0.35);
+    border-radius: 20px;
+    padding: 2px 10px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .set-btn:active { background: rgba(245,158,11,0.35); }
 </style>
 </head>
 <body>
@@ -616,26 +631,14 @@
     return toMins(s.dep) ?? toMins(s.arr);
   }
 
-  // Current time in minutes from midnight
-  function nowMins() {
-    const now = new Date();
-    return now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
-  }
-
-  // Find current station index
-  function getCurrentStationIndex(mins) {
-    // Find last station we have passed or are at
-    let idx = 0;
-    for (let i = 0; i < stations.length; i++) {
-      const sm = stationMins(stations[i]);
-      if (sm !== null && mins >= sm) idx = i;
-    }
-    return idx;
-  }
-
   const DEST_IDX = 13; // Dondaicha index
+  let manualIdx = parseInt(localStorage.getItem("kx_idx") ?? "0");
 
-  function formatTime(str) { return str ?? "--:--"; }
+  function setStation(idx) {
+    manualIdx = idx;
+    try { localStorage.setItem("kx_idx", idx); } catch(e){}
+    updateUI();
+  }
 
   function buildStations(currentIdx) {
     const list = document.getElementById("stationsList");
@@ -661,6 +664,8 @@
       const arrTime = s.arr ? `<div class="time-item"><div class="time-label">ARR</div><div class="time-val">${s.arr}</div></div>` : "";
       const depTime = s.dep ? `<div class="time-item"><div class="time-label">DEP</div><div class="time-val">${s.dep}</div></div>` : "";
 
+      const tapBtn = (!isDest && !isPast) ? `<button class="set-btn" onclick="setStation(${i})">📍 I'm here</button>` : "";
+
       item.innerHTML = `
         <div class="timeline">
           <div class="timeline-dot"></div>
@@ -677,6 +682,7 @@
           <div class="station-meta">
             <span class="dist-badge">📍 ${s.km} km</span>
             ${tag}
+            ${tapBtn}
           </div>
         </div>
       `;
@@ -686,8 +692,7 @@
 
   function updateUI() {
     const now = new Date();
-    const mins = nowMins();
-    const currentIdx = getCurrentStationIndex(mins);
+    const currentIdx = manualIdx;
     const destStn = stations[DEST_IDX];
     const destMins = toMins(destStn.arr);
     const minsToDestination = Math.max(0, Math.round(destMins - mins));
